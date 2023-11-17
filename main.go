@@ -27,9 +27,9 @@ type Submission struct {
 	ProductPitched_SuperDelux     int
 }
 
-type ModelRequest struct {
-	instances []int
-}
+// type ModelRequest struct {
+// 	instances []int
+// }
 
 func main() {
 	// var ref string = "{\"instances\":[[ 10,40,1,0,1,0,0,1,0,0,1,0,0,0]]}"
