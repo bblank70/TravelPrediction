@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <title> Trips&Travel.Com Vacation Recommendation </title>
+  <link rel="icon" type="images/x-icon" href=./static/images/wrench.png />
+
+  
+  <style>
+    body {
+      background-color: rgb(173, 173, 171);
+      height: 100%;
+      font-size: 80%;
+    }
+
+    p {
+      font-size: 100%;
+      padding-top: 0;
+    }
+
+    legend {
+      font-size: 100%;
+      font-weight: bold;
+    }
+
+    strong {
+      font-weight: bold;
+      font-size: 110%;
+    }
+
+    a {
+      color: rgb(148, 176, 49);
+    }
+
+    .redText {
+      color: red
+    }
+
+    .center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+    }
+
+    .equipment {
+      text-align: center
+    }
+
+    .my-footer {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      min-height: 5%;
+      min-width: 100%;
+      color: white;
+      background-color: rgb(62, 82, 91);
+    }
+
+    div#heading {
+      padding: 5eM;
+      margin: auto;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+    <nav class="navbar" style="background-color: rgb(62, 82, 91);">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src=".templates/static/images/logo.png" alt="TravelTipsLogo" width="100" height="100">
+        </a>
+        <!-- <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+              </button> -->
+        <div class="navbar navbar-expand" id="navbarScroll">
+        </div>
+      </div>
+    </nav>
+
+    <div class="responseHeader">
+        <h2>Please Verify These Attributes!</h2>
+      </div>
+      <hr> <!--horizonal break-->
+
+
+      <table>
+        <tr>
+          <th>Attribute</th>
+          <th>Value</th>
+          
+        </tr>
+        <tr>
+          <td>MonthlyIncome</td>
+          <td>{{.MonthlyIncome}}</td>
+        </tr>
+        <tr>
+          <td>Age</td>
+          <td>{{.Age}}</td>
+        </tr>
+        <tr>
+          <td>Passport</td>
+          <td>{{.Passport}}</td>
+        </tr>
+        <tr>
+          <td>Divorced</td>
+          <td>{{.MaritalStatus_Divorced}}</td>
+        </tr>
+        <tr>
+          <td>Married</td>
+          <td>{{.MaritalStatus_Married}}</td>
+        </tr>
+        <tr>
+          <td>SingleUnmarried</td>
+          <td>{{.MaritalStatus_SingleUnmarried}}</td>
+        </tr>
+        <tr>
+          <td>3-Star</td>
+          <td>{{.PreferredPropertyStar_3}}</td>
+        </tr>
+        <tr>
+          <td>4-Star</td>
+          <td>{{.PreferredPropertyStar_4}}</td>
+        </tr>
+        <tr>
+          <td>5-Star</td>
+          <td>{{.PreferredPropertyStar_5}}</td>
+        </tr>
+        <tr>
+          <td>Basic</td>
+          <td>{{.ProductPitched_Basic}}</td>
+        </tr>
+        <tr>
+          <td>Deluxe</td>
+          <td>{{.ProductPitched_Deluxe}}</td>
+        </tr>
+        <tr>
+          <td>King</td>
+          <td>{{.ProductPitched_King}}</td>
+        </tr>
+        <tr>
+          <td>Standard</td>
+          <td>{{.ProductPitched_Standard}}</td>
+        </tr>
+        <tr>
+          <td>SuperDeluxe</td>
+          <td>{{.ProductPitched_SuperDelux}}</td>
+        </tr>
+
+        <form action="/response"  method="POST">
+          <input type="submit" value="See My Results" />
+        </form>
+
+</body>
+
