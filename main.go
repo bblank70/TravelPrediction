@@ -43,7 +43,10 @@ var Details = Submission{}
 var Results = ModelResult{}
 
 // this is a demo URL for JSON testing
-var posturl = "https://jsonplaceholder.typicode.com/posts"
+// var posturl = "https://jsonplaceholder.typicode.com/posts"
+
+// this is the GCP endpoint
+var posturl = "https://us-central1-aiplatform.googleapis.com/v1/projects/crafty-willow-399720/locations/us-central1/endpoints/1178238859348017152:predict"
 
 // These are to build the request to the endpoint
 var i string = ("\"instances\"")
