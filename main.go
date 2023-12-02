@@ -11,7 +11,6 @@ import (
 
 	aiplatform "cloud.google.com/go/aiplatform/apiv1"
 	"cloud.google.com/go/aiplatform/apiv1/aiplatformpb"
-	"google.golang.org/api/option"
 	"google.golang.org/protobuf/types/known/structpb"
 )
 
@@ -147,7 +146,8 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	/////////////////////from  https://medium.com/google-cloud/generative-ai-app-development-using-vertex-ai-and-golang-cf315c7fa4e1
 
 	Ctx := context.Background()
-	C, err := aiplatform.NewPredictionClient(Ctx, option.WithEndpoint("us-central1-aiplatform.googleapis.com:443"))
+	C, err := aiplatform.NewPredictionClient(Ctx)
+	// C, err := aiplatform.NewPredictionClient(Ctx, option.WithEndpoint("us-central1-aiplatform.googleapis.com:443"))
 	if err != nil {
 		log.Fatalf("Error 1: %v", err)
 	}
