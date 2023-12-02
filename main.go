@@ -1,13 +1,20 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"html/template"
 	"io"
+	"log"
 	"net/http"
 	"reflect"
 	"strconv"
 	"strings"
+
+	aiplatform "cloud.google.com/go/aiplatform/apiv1"
+	"cloud.google.com/go/aiplatform/apiv1/aiplatformpb"
+	"google.golang.org/api/option"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // type submission holds information recieved as a POST from /, index, home
@@ -64,6 +71,7 @@ var tpl *template.Template
 // //////////////////////////////////////////// init instantiates the templates, they must be .tmpl extenstions
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*.tmpl"))
+
 }
 
 // ////////////////////////////////////////////
@@ -77,6 +85,8 @@ func main() {
 	http.ListenAndServe(":8080", nil)
 
 }
+
+///////////////////////////////////
 
 func index(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "home.tmpl", nil)
@@ -136,15 +146,49 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("The request string was:", Requestb)
 	// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
 
-	resp, err := http.Post(posturl, "application/x-www-form-urlencoded", strings.NewReader(Requestb))
+	/////////////////////from  https://medium.com/google-cloud/generative-ai-app-development-using-vertex-ai-and-golang-cf315c7fa4e1
+
+	Ctx := context.Background()
+	C, err := aiplatform.NewPredictionClient(Ctx, option.WithEndpoint("us-central1-aiplatform.googleapis.com:443"))
 	if err != nil {
-		fmt.Println("There was an error:", err)
+		log.Fatalf("Error 1: %v", err)
 	}
-	defer resp.Body.Close()
+	defer C.Close()
 
-	b, err := io.ReadAll(resp.Body)
-	// fmt.Println("resp type is:", reflect.TypeOf(resp), "and is:", resp)
+	reqs := &aiplatformpb.PredictRequest{
+		// Replace your-gcp-project to your GCP Project ID
+		// Notice the model text-bison@001 at the end of the endpoint
+		// If you want to use other model, change here
+		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/3122105048511807488",
+		Instances: []*structpb.Value{}, /// need to reformat this object
+	}
+	//TODO::::: Get something to put into "Instances" above
 
+	/////////////////////
+
+	resp, err := C.Predict(Ctx, reqs)
+	if err != nil {
+		log.Fatalf("Error 4: %v", err)
+	}
+
+	
+	respMap := resp.Predictions[0].GetStructValue().AsMap()
+	fmt.Printf("resp: %v", respMap["content"])
+ 	}
+
+	///////////////////// This was the test code!
+
+	// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", strings.NewReader(Requestb))
+	// if err != nil {
+	// 	fmt.Println("There was an error:", err)
+	// }
+	// defer resp.Body.Close()
+	// fmt.Println(resp)
+
+	// b, err := io.ReadAll(resp.Body) // This was the test code
+	// // fmt.Println("resp type is:", reflect.TypeOf(resp), "and is:", resp)
+
+	b, err := io.ReadAll(reqs.Body) // This was the test code
 	St = string(b)
 
 	Results = ModelResult{
