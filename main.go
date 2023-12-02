@@ -4,12 +4,10 @@ import (
 	"context"
 	"fmt"
 	"html/template"
-	"io"
 	"log"
 	"net/http"
 	"reflect"
 	"strconv"
-	"strings"
 
 	aiplatform "cloud.google.com/go/aiplatform/apiv1"
 	"cloud.google.com/go/aiplatform/apiv1/aiplatformpb"
@@ -171,34 +169,40 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Error 4: %v", err)
 	}
 
-	
-	RespMap := resp.Predictions[0].GetStructValue().AsMap()
-	fmt.Printf("resp: %v", respMap["content"])
- 	}
+	// RespMap := resp.Predictions[0].GetStructValue().AsMap()
 
-	///////////////////// This was the test code!
+	Resp := resp.Predictions[0].GetStructValue()
+	RespString := fmt.Sprintf("%+v", Resp)
 
-	// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", strings.NewReader(Requestb))
-	// if err != nil {
-	// 	fmt.Println("There was an error:", err)
+	// Results = ModelResult{
+	// 	Request: Requestb,
+	// 	St:      fmt.Printf("resp: %v", RespMap),
 	// }
-	// defer resp.Body.Close()
-	// fmt.Println(resp)
 
-	// b, err := io.ReadAll(resp.Body) 
-	// // fmt.Println("resp type is:", reflect.TypeOf(resp), "and is:", resp)
-
-	// b, err := io.ReadAll(reqs.Body) // This was the test code
-	// St = string(b)
-// This was the test code
 	Results = ModelResult{
 		Request: Requestb,
-		St:      RespMap["content"],
+		St:      RespString,
 	}
 
 	tpl.ExecuteTemplate(w, "verify.tmpl", Details) // we pass the Details Submission to the template to render the fileds to be verified
 
 }
+
+///////////////////// This was the test code!
+
+// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", strings.NewReader(Requestb))
+// if err != nil {
+// 	fmt.Println("There was an error:", err)
+// }
+// defer resp.Body.Close()
+// fmt.Println(resp)
+
+// b, err := io.ReadAll(resp.Body)
+// // fmt.Println("resp type is:", reflect.TypeOf(resp), "and is:", resp)
+
+// b, err := io.ReadAll(reqs.Body) // This was the test code
+// St = string(b)
+// This was the test code
 
 func responder(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
