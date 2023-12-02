@@ -172,7 +172,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	
-	respMap := resp.Predictions[0].GetStructValue().AsMap()
+	RespMap := resp.Predictions[0].GetStructValue().AsMap()
 	fmt.Printf("resp: %v", respMap["content"])
  	}
 
@@ -185,15 +185,15 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	// defer resp.Body.Close()
 	// fmt.Println(resp)
 
-	// b, err := io.ReadAll(resp.Body) // This was the test code
+	// b, err := io.ReadAll(resp.Body) 
 	// // fmt.Println("resp type is:", reflect.TypeOf(resp), "and is:", resp)
 
-	b, err := io.ReadAll(reqs.Body) // This was the test code
-	St = string(b)
-
+	// b, err := io.ReadAll(reqs.Body) // This was the test code
+	// St = string(b)
+// This was the test code
 	Results = ModelResult{
 		Request: Requestb,
-		St:      St,
+		St:      RespMap["content"],
 	}
 
 	tpl.ExecuteTemplate(w, "verify.tmpl", Details) // we pass the Details Submission to the template to render the fileds to be verified
