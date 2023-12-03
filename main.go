@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"protobuf"
 	"reflect"
 	"strconv"
 
@@ -141,6 +142,12 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 
 	Requestb = pre + body + post
 	fmt.Println("The request string was:", Requestb)
+
+	D, err := protobuf.Marshall(Details)
+	if err != nil {
+		log.Fatal("Marshalling error:", err)
+	}
+
 	// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
 
 	/////////////////////from  https://medium.com/google-cloud/generative-ai-app-development-using-vertex-ai-and-golang-cf315c7fa4e1
@@ -158,7 +165,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		// Notice the model text-bison@001 at the end of the endpoint
 		// If you want to use other model, change here
 		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/3122105048511807488",
-		Instances: []*structpb.Value{},
+		Instances: []*structpb.Value{D},
 		/// need to reformat this object
 	}
 	//TODO::::: Get something to put into "Instances" above
