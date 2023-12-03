@@ -6,9 +6,10 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"protobuf"
 	"reflect"
 	"strconv"
+
+	"github.com/golang/protobuf/proto"
 
 	aiplatform "cloud.google.com/go/aiplatform/apiv1"
 	"cloud.google.com/go/aiplatform/apiv1/aiplatformpb"
@@ -143,7 +144,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	Requestb = pre + body + post
 	fmt.Println("The request string was:", Requestb)
 
-	D, err := protobuf.Marshall(Details)
+	D, err := proto.Marshall(Details)
 	if err != nil {
 		log.Fatal("Marshalling error:", err)
 	}
