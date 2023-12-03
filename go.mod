@@ -3,9 +3,12 @@ module request
 go 1.19
 
 require (
+	cloud.google.com/go/aiplatform v1.55.0
+	google.golang.org/protobuf v1.31.0
+)
+
+require (
 	cloud.google.com/go v0.111.0 // indirect
-	cloud.google.com/go/aiplatform v1.55.0 // indirect
-	cloud.google.com/go/apikeys v1.1.4 // indirect
 	cloud.google.com/go/compute v1.23.1 // indirect
 	cloud.google.com/go/compute/metadata v0.2.3 // indirect
 	cloud.google.com/go/iam v1.1.3 // indirect
@@ -28,5 +31,4 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20231016165738-49dd2c1f3d0b // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231016165738-49dd2c1f3d0b // indirect
 	google.golang.org/grpc v1.59.0 // indirect
-	google.golang.org/protobuf v1.31.0 // indirect
 )
