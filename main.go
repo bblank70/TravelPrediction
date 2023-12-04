@@ -9,8 +9,6 @@ import (
 	"reflect"
 	"strconv"
 
-	"github.com/golang/protobuf/proto"
-
 	aiplatform "cloud.google.com/go/aiplatform/apiv1"
 	"cloud.google.com/go/aiplatform/apiv1/aiplatformpb"
 	"google.golang.org/protobuf/types/known/structpb"
@@ -144,10 +142,10 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	Requestb = pre + body + post
 	fmt.Println("The request string was:", Requestb)
 
-	D, err := proto.Marshall(Details)
-	if err != nil {
-		log.Fatal("Marshalling error:", err)
-	}
+	// D, err := proto.Marshal(Details)
+	// if err != nil {
+	// 	log.Fatal("Marshalling error:", err)
+	// }
 
 	// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
 
@@ -166,7 +164,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		// Notice the model text-bison@001 at the end of the endpoint
 		// If you want to use other model, change here
 		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/3122105048511807488",
-		Instances: []*structpb.Value{D},
+		Instances: []*structpb.Value{},
 		/// need to reformat this object
 	}
 	//TODO::::: Get something to put into "Instances" above
