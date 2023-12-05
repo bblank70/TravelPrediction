@@ -132,6 +132,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	}
 
 	v := reflect.ValueOf(Details)
+	body = ""
 	// typeOfdetails := v.Type()
 
 	for i := 0; i < v.NumField(); i++ {
