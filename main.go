@@ -173,7 +173,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Error 1: %v", err)
 	}
 	defer C.Close()
-	log.Println("The serialized message sent was:", []*structpb.Value{m})
+	log.Println("The serialized message sent was:", m)
 
 	reqs := &aiplatformpb.PredictRequest{
 		// Replace your-gcp-project to your GCP Project ID
