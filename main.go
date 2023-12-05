@@ -128,25 +128,23 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		ProductPitched_SuperDelux:     ppsd,
 	}
 
-	m, err := structpb.NewValue(map[string]interface{}{
-		"MonthlyIncome":                 income,
-		"Age":                           age,
-		"Passport":                      passport,
-		"MaritalStatus_Divorced":        ms_div,
-		"MaritalStatus_Married":         ms_mar,
-		"MaritalStatus_SingleUnmarried": ms_su,
-		"PreferredPropertyStar_3":       ps3,
-		"PreferredPropertyStar_4":       ps4,
-		"PreferredPropertyStar_5":       ps5,
-		"ProductPitched_Basic":          ppb,
-		"ProductPitched_Deluxe":         ppd,
-		"ProductPitched_King":           ppk,
-		"ProductPitched_Standard":       pps,
-		"ProductPitched_SuperDelux":     ppsd,
-	})
-	if err != nil {
-		log.Println("The protobuffer failed to build:", err)
-	}
+	// m, err := structpb.NewValue(map[string]interface{}{
+	// 	"MonthlyIncome":                 income,
+	// 	"Age":                           age,
+	// 	"Passport":                      passport,
+	// 	"MaritalStatus_Divorced":        ms_div,
+	// 	"MaritalStatus_Married":         ms_mar,
+	// 	"MaritalStatus_SingleUnmarried": ms_su,
+	// 	"PreferredPropertyStar_3":       ps3,
+	// 	"PreferredPropertyStar_4":       ps4,
+	// 	"PreferredPropertyStar_5":       ps5,
+	// 	"ProductPitched_Basic":          ppb,
+	// 	"ProductPitched_Deluxe":         ppd,
+	// 	"ProductPitched_King":           ppk,
+	// 	"ProductPitched_Standard":       pps,
+	// 	"ProductPitched_SuperDelux":     ppsd,
+	// })
+
 	v := reflect.ValueOf(Details)
 	// typeOfdetails := v.Type()
 
@@ -162,6 +160,14 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	Requestb = pre + body + post
 	log.Println("The request string was:", Requestb)
 
+	m, err := structpb.NewValue(map[string]interface{}{
+		"instances": body,
+	})
+
+	if err != nil {
+		log.Println("The protobuffer failed to build:", err)
+	}
+	log.Println("The serialized message sent was:", m)
 	// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
 
 	/////////////////////from  https://medium.com/google-cloud/generative-ai-app-development-using-vertex-ai-and-golang-cf315c7fa4e1
@@ -173,7 +179,6 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		log.Fatalf("Error 1: %v", err)
 	}
 	defer C.Close()
-	log.Println("The serialized message sent was:", m)
 
 	reqs := &aiplatformpb.PredictRequest{
 		// Replace your-gcp-project to your GCP Project ID
