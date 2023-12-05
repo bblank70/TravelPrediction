@@ -205,7 +205,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	C, err := aiplatform.NewPredictionClient(Ctx, option.WithEndpoint("us-central1-aiplatform.googleapis.com:443"))
 
 	if err != nil {
-		log.Fatalf("Error 1: %v", err)
+		log.Println("Error 1:", err)
 	}
 	defer C.Close()
 
@@ -245,6 +245,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 
 	// Resp := resp.Predictions[0].GetStructValue()
 	RespString := fmt.Sprintf("%+v", resp)
+	log.Println("The Response String was:", resp)
 
 	// Results = ModelResult{
 	// 	Request: Requestb,
