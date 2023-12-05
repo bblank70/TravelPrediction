@@ -128,23 +128,6 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		ProductPitched_Standard:       pps,
 		ProductPitched_SuperDelux:     ppsd,
 	}
-	//fixes the m protostruct
-	m, err := structpb.NewValue(map[string]interface{}{
-		"MonthlyIncome":                 income,
-		"Age":                           age,
-		"Passport":                      passport,
-		"MaritalStatus_Divorced":        ms_div,
-		"MaritalStatus_Married":         ms_mar,
-		"MaritalStatus_SingleUnmarried": ms_su,
-		"PreferredPropertyStar_3":       ps3,
-		"PreferredPropertyStar_4":       ps4,
-		"PreferredPropertyStar_5":       ps5,
-		"ProductPitched_Basic":          ppb,
-		"ProductPitched_Deluxe":         ppd,
-		"ProductPitched_King":           ppk,
-		"ProductPitched_Standard":       pps,
-		"ProductPitched_SuperDelux":     ppsd,
-	})
 
 	v := reflect.ValueOf(Details)
 	// typeOfdetails := v.Type()
@@ -166,7 +149,32 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	// 	"instances": body,
 	// })
 
+	// m, err := httpbody.HttpBody{
+	// 	"Data": []byte(body),
+	// }
+
 	//TODO: REFORMAT BODY to be array of ints? or redeploy model with headers?
+
+	//uncmt here
+	// // fixes the m protostruct
+	m, err := structpb.NewValue(map[string]interface{}{
+		"MonthlyIncome":                 income,
+		"Age":                           age,
+		"Passport":                      passport,
+		"MaritalStatus_Divorced":        ms_div,
+		"MaritalStatus_Married":         ms_mar,
+		"MaritalStatus_SingleUnmarried": ms_su,
+		"PreferredPropertyStar_3":       ps3,
+		"PreferredPropertyStar_4":       ps4,
+		"PreferredPropertyStar_5":       ps5,
+		"ProductPitched_Basic":          ppb,
+		"ProductPitched_Deluxe":         ppd,
+		"ProductPitched_King":           ppk,
+		"ProductPitched_Standard":       pps,
+		"ProductPitched_SuperDelux":     ppsd,
+	})
+
+	//uncmt here
 
 	if err != nil {
 		log.Println("The protobuffer failed to build:", err)
@@ -178,12 +186,13 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 
 	Ctx := context.Background()
 	C, err := aiplatform.NewPredictionClient(Ctx, option.WithEndpoint("us-central1-aiplatform.googleapis.com:443"))
-	// C, err := aiplatform.NewPredictionClient(Ctx, option.WithEndpoint("us-central1-aiplatform.googleapis.com:443"))
+
 	if err != nil {
 		log.Fatalf("Error 1: %v", err)
 	}
 	defer C.Close()
 
+	//uncmt here
 	reqs := &aiplatformpb.PredictRequest{
 		// Replace your-gcp-project to your GCP Project ID
 		// Notice the model text-bison@001 at the end of the endpoint
@@ -191,6 +200,17 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
 		Instances: []*structpb.Value{m},
 	}
+	//uncmt here
+
+	///cmt here
+	// reqs := &aiplatformpb.RawPredictRequest{
+	// 	// Replace your-gcp-project to your GCP Project ID
+	// 	// Notice the model text-bison@001 at the end of the endpoint
+	// 	// If you want to use other model, change here
+	// 	Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
+	// 	HttpBody: m,
+	// }
+	////end cmt
 	//TODO::::: Get something to put into "Instances" above
 
 	/////////////////////
