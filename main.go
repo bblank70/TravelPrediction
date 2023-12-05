@@ -127,23 +127,23 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		ProductPitched_Standard:       pps,
 		ProductPitched_SuperDelux:     ppsd,
 	}
-
-	// m, err := structpb.NewValue(map[string]interface{}{
-	// 	"MonthlyIncome":                 income,
-	// 	"Age":                           age,
-	// 	"Passport":                      passport,
-	// 	"MaritalStatus_Divorced":        ms_div,
-	// 	"MaritalStatus_Married":         ms_mar,
-	// 	"MaritalStatus_SingleUnmarried": ms_su,
-	// 	"PreferredPropertyStar_3":       ps3,
-	// 	"PreferredPropertyStar_4":       ps4,
-	// 	"PreferredPropertyStar_5":       ps5,
-	// 	"ProductPitched_Basic":          ppb,
-	// 	"ProductPitched_Deluxe":         ppd,
-	// 	"ProductPitched_King":           ppk,
-	// 	"ProductPitched_Standard":       pps,
-	// 	"ProductPitched_SuperDelux":     ppsd,
-	// })
+	//fixes the m protostruct
+	m, err := structpb.NewValue(map[string]interface{}{
+		"MonthlyIncome":                 income,
+		"Age":                           age,
+		"Passport":                      passport,
+		"MaritalStatus_Divorced":        ms_div,
+		"MaritalStatus_Married":         ms_mar,
+		"MaritalStatus_SingleUnmarried": ms_su,
+		"PreferredPropertyStar_3":       ps3,
+		"PreferredPropertyStar_4":       ps4,
+		"PreferredPropertyStar_5":       ps5,
+		"ProductPitched_Basic":          ppb,
+		"ProductPitched_Deluxe":         ppd,
+		"ProductPitched_King":           ppk,
+		"ProductPitched_Standard":       pps,
+		"ProductPitched_SuperDelux":     ppsd,
+	})
 
 	v := reflect.ValueOf(Details)
 	// typeOfdetails := v.Type()
@@ -151,6 +151,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < v.NumField(); i++ {
 		// fmt.Printf("Field: %s\tValue: %v\n", typeOfdetails.Field(i).Name, v.Field(i).Interface())
 		body = body + fmt.Sprintf("%v", v.Field(i).Interface()) + ","
+
 	}
 
 	if last := len(body) - 1; last >= 0 && body[last] == ',' {
@@ -160,9 +161,11 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	Requestb = pre + body + post
 	log.Println("The request string was:", Requestb)
 
-	m, err := structpb.NewValue(map[string]interface{}{
-		"instances": body,
-	})
+	// m, err := structpb.NewValue(map[string]interface{}{
+	// 	"instances": body,
+	// })
+
+	//TODO: REFORMAT BODY to be array of ints? or redeploy model with headers?
 
 	if err != nil {
 		log.Println("The protobuffer failed to build:", err)
@@ -184,9 +187,8 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		// Replace your-gcp-project to your GCP Project ID
 		// Notice the model text-bison@001 at the end of the endpoint
 		// If you want to use other model, change here
-		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/3122105048511807488",
+		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/5302999556345036800",
 		Instances: []*structpb.Value{m},
-		/// need to reformat this object
 	}
 	//TODO::::: Get something to put into "Instances" above
 
