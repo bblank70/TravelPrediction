@@ -12,8 +12,10 @@ import (
 	aiplatform "cloud.google.com/go/aiplatform/apiv1"
 	"cloud.google.com/go/aiplatform/apiv1/aiplatformpb"
 	"google.golang.org/api/option"
-	"google.golang.org/protobuf/types/known/structpb"
+
 	// "google.golang.org/protobuf/types/known/structpb"
+	// "google.golang.org/protobuf/types/known/structpb"
+	"google.golang.org/genproto/googleapis/api/httpbody"
 )
 
 // type submission holds information recieved as a POST from /, index, home
@@ -149,37 +151,52 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	// 	"instances": body,
 	// })
 
+	Raw := &httpbody.HttpBody{}
+	Raw.Data = []byte(body)
+	log.Println("Raw was:", Raw)
+	reqs := &aiplatformpb.RawPredictRequest{
+		// Replace your-gcp-project to your GCP Project ID
+		// Notice the model text-bison@001 at the end of the endpoint
+		// If you want to use other model, change here
+		Endpoint: "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
+		HttpBody: Raw,
+	}
+
 	// m, err := httpbody.HttpBody{
-	// 	"Data": []byte(body),
+	// 	"Data": Raw,
 	// }
 
 	//TODO: REFORMAT BODY to be array of ints? or redeploy model with headers?
 
 	//uncmt here
 	// // fixes the m protostruct
-	m, err := structpb.NewValue(map[string]interface{}{
-		"MonthlyIncome":                 income,
-		"Age":                           age,
-		"Passport":                      passport,
-		"MaritalStatus_Divorced":        ms_div,
-		"MaritalStatus_Married":         ms_mar,
-		"MaritalStatus_SingleUnmarried": ms_su,
-		"PreferredPropertyStar_3":       ps3,
-		"PreferredPropertyStar_4":       ps4,
-		"PreferredPropertyStar_5":       ps5,
-		"ProductPitched_Basic":          ppb,
-		"ProductPitched_Deluxe":         ppd,
-		"ProductPitched_King":           ppk,
-		"ProductPitched_Standard":       pps,
-		"ProductPitched_SuperDelux":     ppsd,
-	})
+	// m, err := structpb.NewValue(map[string]interface{}{
+	// 	"MonthlyIncome":                 income,
+	// 	"Age":                           age,
+	// 	"Passport":                      passport,
+	// 	"MaritalStatus_Divorced":        ms_div,
+	// 	"MaritalStatus_Married":         ms_mar,
+	// 	"MaritalStatus_SingleUnmarried": ms_su,
+	// 	"PreferredPropertyStar_3":       ps3,
+	// 	"PreferredPropertyStar_4":       ps4,
+	// 	"PreferredPropertyStar_5":       ps5,
+	// 	"ProductPitched_Basic":          ppb,
+	// 	"ProductPitched_Deluxe":         ppd,
+	// 	"ProductPitched_King":           ppk,
+	// 	"ProductPitched_Standard":       pps,
+	// 	"ProductPitched_SuperDelux":     ppsd,
+	// })
 
 	//uncmt here
 
-	if err != nil {
-		log.Println("The protobuffer failed to build:", err)
-	}
-	log.Println("The serialized message sent was:", m)
+	// if err != nil {
+	// 	log.Println("The protobuffer failed to build:", err)
+	// }
+
+	//uncmt
+	// log.Println("The serialized message sent was:", m)
+	//uncmt
+
 	// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
 
 	/////////////////////from  https://medium.com/google-cloud/generative-ai-app-development-using-vertex-ai-and-golang-cf315c7fa4e1
@@ -193,13 +210,13 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	defer C.Close()
 
 	//uncmt here
-	reqs := &aiplatformpb.PredictRequest{
-		// Replace your-gcp-project to your GCP Project ID
-		// Notice the model text-bison@001 at the end of the endpoint
-		// If you want to use other model, change here
-		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
-		Instances: []*structpb.Value{m},
-	}
+	// reqs := &aiplatformpb.PredictRequest{
+	// 	// Replace your-gcp-project to your GCP Project ID
+	// 	// Notice the model text-bison@001 at the end of the endpoint
+	// 	// If you want to use other model, change here
+	// 	Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
+	// 	Instances: []*structpb.Value{m},
+	// }
 	//uncmt here
 
 	///cmt here
@@ -215,15 +232,19 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 
 	/////////////////////
 
-	resp, err := C.Predict(Ctx, reqs)
+	// resp, err := C.Predict(Ctx, reqs)
+	// if err != nil {
+	// 	log.Fatalf("Error 4: %v", err)
+	// }
+	resp, err := C.RawPredict(Ctx, reqs)
 	if err != nil {
 		log.Fatalf("Error 4: %v", err)
 	}
-
+	log.Println(resp)
 	// RespMap := resp.Predictions[0].GetStructValue().AsMap()
 
-	Resp := resp.Predictions[0].GetStructValue()
-	RespString := fmt.Sprintf("%+v", Resp)
+	// Resp := resp.Predictions[0].GetStructValue()
+	RespString := fmt.Sprintf("%+v", resp)
 
 	// Results = ModelResult{
 	// 	Request: Requestb,
