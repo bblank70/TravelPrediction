@@ -13,8 +13,7 @@ import (
 	"cloud.google.com/go/aiplatform/apiv1/aiplatformpb"
 	"google.golang.org/api/option"
 
-	// "google.golang.org/protobuf/types/known/structpb"
-	// "google.golang.org/protobuf/types/known/structpb"
+	// "google.golang.org/protobuf/types/known/structpb" ///this will need to be uncommented if using .Predict vs .RawPredict
 	"google.golang.org/genproto/googleapis/api/httpbody"
 )
 
@@ -42,19 +41,13 @@ type ModelResult struct {
 	St      string //st is the body of the response
 }
 
-///////////////////////////////////////////// variables
+// //////////////////////////////////////////// variables // ////////////////////////////////////////////
 
 // Details is the instance of the Submission struct
 var Details = Submission{}
 
 // Results is the instance of the ModelResult struct
 var Results = ModelResult{}
-
-// this is a demo URL for JSON testing
-// var posturl = "https://jsonplaceholder.typicode.com/posts"
-
-// this is the GCP endpoint
-// var posturl = "https://us-central1-aiplatform.googleapis.com/v1/projects/crafty-willow-399720/locations/us-central1/endpoints/5302999556345036800:predict"
 
 // These are to build the request to the endpoint
 var i string = ("\"instances\"")
@@ -69,13 +62,14 @@ var Requestb string
 // this is the pointer to the templates
 var tpl *template.Template
 
-// //////////////////////////////////////////// init instantiates the templates, they must be .tmpl extenstions
+// //////////////////////////////////////////// functions // ////////////////////////////////////////////
+
+// init instantiates the templates, they must be .tmpl extenstions
 func init() {
 	tpl = template.Must(template.ParseGlob("templates/*.tmpl"))
 
 }
 
-// ////////////////////////////////////////////
 func main() {
 
 	// these are our paths
@@ -87,12 +81,14 @@ func main() {
 
 }
 
-///////////////////////////////////
+// ////////////////////////////////////////////
 
+// index handles the route to the home page
 func index(w http.ResponseWriter, r *http.Request) {
 	tpl.ExecuteTemplate(w, "home.tmpl", nil)
 }
 
+// verifyer gets the values from the form, extracts and restructures them to make a post request to the vertex AI endpoint
 func verifyer(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -113,7 +109,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	pps, _ := strconv.Atoi(r.FormValue("Standard"))
 	ppsd, _ := strconv.Atoi(r.FormValue("SuperDelux"))
 
-	//create our struct
+	//create our struct from the form values
 	Details = Submission{
 		MonthlyIncome:                 income,
 		Age:                           age,
@@ -133,10 +129,10 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 
 	v := reflect.ValueOf(Details)
 	body = ""
-	// typeOfdetails := v.Type()
+	// typeOfdetails := v.Type() //debugging code to get the type of v
 
 	for i := 0; i < v.NumField(); i++ {
-		// fmt.Printf("Field: %s\tValue: %v\n", typeOfdetails.Field(i).Name, v.Field(i).Interface())
+		// fmt.Printf("Field: %s\tValue: %v\n", typeOfdetails.Field(i).Name, v.Field(i).Interface()) //debugging code to build the http body.
 		body = body + fmt.Sprintf("%v", v.Field(i).Interface()) + ","
 
 	}
@@ -148,28 +144,20 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	Requestb = pre + body + post
 	log.Println("The request string was:", Requestb)
 
-	// m, err := structpb.NewValue(map[string]interface{}{
-	// 	"instances": body,
-	// })
-
+	// structure the body of the raw request
 	Raw := &httpbody.HttpBody{}
 	Raw.Data = []byte(Requestb)
-	log.Println("Raw was:", Raw)
+
+	// indentify the post request using the raw body and the endpoint
 	reqs := &aiplatformpb.RawPredictRequest{
-		// Replace your-gcp-project to your GCP Project ID
-		// Notice the model text-bison@001 at the end of the endpoint
-		// If you want to use other model, change here
+		// Note  GCP Project ID and endpoint ID
 		Endpoint: "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
 		HttpBody: Raw,
 	}
 
-	// m, err := httpbody.HttpBody{
-	// 	"Data": Raw,
-	// }
+	// ////////////////////////////////////////////
+	//uncmt here if using .Predict vs .RawPredict
 
-	//TODO: REFORMAT BODY to be array of ints? or redeploy model with headers?
-
-	//uncmt here
 	// // fixes the m protostruct
 	// m, err := structpb.NewValue(map[string]interface{}{
 	// 	"MonthlyIncome":                 income,
@@ -188,20 +176,30 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	// 	"ProductPitched_SuperDelux":     ppsd,
 	// })
 
-	//uncmt here
+	// reqs := &aiplatformpb.PredictRequest{
+	// 	// Replace your-gcp-project to your GCP Project ID
+	// 	// Notice the model text-bison@001 at the end of the endpoint
+	// 	// If you want to use other model, change here
+	// 	Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
+	// 	Instances: []*structpb.Value{m},
+	// }
 
 	// if err != nil {
 	// 	log.Println("The protobuffer failed to build:", err)
 	// }
 
-	//uncmt
 	// log.Println("The serialized message sent was:", m)
-	//uncmt
 
-	// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", bytes.NewBuffer(payload))
+	// resp, err := C.Predict(Ctx, reqs)
+	// if err != nil {
+	// 	log.Fatalf("Error 4: %v", err)
+	// }
 
-	/////////////////////from  https://medium.com/google-cloud/generative-ai-app-development-using-vertex-ai-and-golang-cf315c7fa4e1
+	//uncmt if attempt to use the .Predict vs .RawPredict
+	// ////////////////////////////////////////////
 
+	// ////////////////////////////////////////////
+	// CTX gets the credentials of the application service account
 	Ctx := context.Background()
 	C, err := aiplatform.NewPredictionClient(Ctx, option.WithEndpoint("us-central1-aiplatform.googleapis.com:443"))
 
@@ -210,49 +208,24 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	}
 	defer C.Close()
 
-	//uncmt here
-	// reqs := &aiplatformpb.PredictRequest{
-	// 	// Replace your-gcp-project to your GCP Project ID
-	// 	// Notice the model text-bison@001 at the end of the endpoint
-	// 	// If you want to use other model, change here
-	// 	Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
-	// 	Instances: []*structpb.Value{m},
-	// }
-	//uncmt here
-
-	///cmt here
-	// reqs := &aiplatformpb.RawPredictRequest{
-	// 	// Replace your-gcp-project to your GCP Project ID
-	// 	// Notice the model text-bison@001 at the end of the endpoint
-	// 	// If you want to use other model, change here
-	// 	Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
-	// 	HttpBody: m,
-	// }
-	////end cmt
-	//TODO::::: Get something to put into "Instances" above
-
-	/////////////////////
-
-	// resp, err := C.Predict(Ctx, reqs)
-	// if err != nil {
-	// 	log.Fatalf("Error 4: %v", err)
-	// }
+	// gets the response using the credentials of the application service account
 	resp, err := C.RawPredict(Ctx, reqs)
 	if err != nil {
 		log.Fatalf("Error 4: %v", err)
 	}
 	log.Println(resp)
-	// RespMap := resp.Predictions[0].GetStructValue().AsMap()
 
+	// ////////////////////////////////////////////
+	// // uncomment if attempting to use .Predict vs .RawPredict
+	// RespMap := resp.Predictions[0].GetStructValue().AsMap()
 	// Resp := resp.Predictions[0].GetStructValue()
+
+	// ////////////////////////////////////////////
+
 	RespString := fmt.Sprintf("%+v", resp)
 	log.Println("The Response String was:", resp)
 
-	// Results = ModelResult{
-	// 	Request: Requestb,
-	// 	St:      fmt.Printf("resp: %v", RespMap),
-	// }
-
+	//stores the response string from Vertex AI (in Results) so we can render it in /response page
 	Results = ModelResult{
 		Request: Requestb,
 		St:      RespString,
@@ -262,28 +235,14 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 
 }
 
-///////////////////// This was the test code!
+// ////////////////////////////////////////////
 
-// resp, err := http.Post(posturl, "application/x-www-form-urlencoded", strings.NewReader(Requestb))
-// if err != nil {
-// 	fmt.Println("There was an error:", err)
-// }
-// defer resp.Body.Close()
-// fmt.Println(resp)
-
-// b, err := io.ReadAll(resp.Body)
-// // fmt.Println("resp type is:", reflect.TypeOf(resp), "and is:", resp)
-
-// b, err := io.ReadAll(reqs.Body) // This was the test code
-// St = string(b)
-// This was the test code
-
+// responder renders the /response page with the data present in Results
 func responder(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		http.Redirect(w, r, "/", http.StatusSeeOther)
 		return
 	}
 
-	// TODO: otherwise put the response on the response page
 	tpl.ExecuteTemplate(w, "response.tmpl", Results)
 }
