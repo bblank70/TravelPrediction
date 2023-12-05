@@ -188,7 +188,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 		// Replace your-gcp-project to your GCP Project ID
 		// Notice the model text-bison@001 at the end of the endpoint
 		// If you want to use other model, change here
-		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/8377269251978821632",
+		Endpoint:  "projects/crafty-willow-399720/locations/us-central1/endpoints/6296606224133652480",
 		Instances: []*structpb.Value{m},
 	}
 	//TODO::::: Get something to put into "Instances" above
