@@ -152,7 +152,7 @@ func verifyer(w http.ResponseWriter, r *http.Request) {
 	// })
 
 	Raw := &httpbody.HttpBody{}
-	Raw.Data = []byte(body)
+	Raw.Data = []byte(Requestb)
 	log.Println("Raw was:", Raw)
 	reqs := &aiplatformpb.RawPredictRequest{
 		// Replace your-gcp-project to your GCP Project ID
